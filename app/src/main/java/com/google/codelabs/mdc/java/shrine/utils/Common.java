@@ -1,5 +1,6 @@
 package com.google.codelabs.mdc.java.shrine.utils;
 
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,5 +70,18 @@ public class Common {
             check = false;
         }
         return check;
+    }
+
+    /**
+     * hàm kiểm tra xem đã mở khoá ở device chưa và response từ api call rent bike thành công không
+     *
+     * @param context context hiện tại
+     * @return true nếu đã mở khoá + response call api là thành công
+     */
+    public static boolean checkRentBikeSuccess(Context context){
+        MyStorage myStorage = new MyStorage(context);
+        String openLockSuccess = myStorage.get(Constant.OPEN_LOCK_SUCCESS_KEY);
+        String contractBike = myStorage.get(Constant.CONTRACT_BIKE_KEY);
+        return !"".equals(openLockSuccess) && !"".equals(contractBike);
     }
 }

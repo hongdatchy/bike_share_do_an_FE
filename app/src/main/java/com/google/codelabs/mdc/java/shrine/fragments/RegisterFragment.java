@@ -150,7 +150,7 @@ public class RegisterFragment extends Fragment {
 
 
     private void callApiGetAllCity() {
-//        myProgressDialog.show();
+        myProgressDialog.show();
         ApiService.apiService.findAllCity().enqueue(new Callback<MyResponse>() {
             @Override
             public void onResponse(@NonNull Call<MyResponse> call, @NonNull Response<MyResponse> response) {
@@ -277,29 +277,13 @@ public class RegisterFragment extends Fragment {
                 System.out.println("abcabc");
                 boolean check = validateRegisterForm();
                 if(check){
-                    int i = 0;
-                    System.out.println(i++ + " " + emailContentEditText.getText());
-                    System.out.println(i++ + " " + firstNameContentEditText.getText());
-                    System.out.println(i++ + " " + lastNameContentEditText.getText());
-                    System.out.println(i++ + " " + yearAutoCompleteTextView.getText());
-                    System.out.println(i++ + " " + monthAutoCompleteTextView.getText());
-                    System.out.println(i++ + " " + dayAutoCompleteTextView.getText());
-                    System.out.println(i++ + " " + cityAutoCompleteTextView.getText());
-                    System.out.println(i++ + " " + districtAutoCompleteTextView.getText());
-                    System.out.println(i++ + " " + wardAutoCompleteTextView.getText());
-                    System.out.println(i++ + " " + genderAutoCompleteTextView.getText());
-                    System.out.println(i++ + " " + phoneContentEditText.getText());
-                    System.out.println(i++ + " " + passContentEditText.getText());
-                    System.out.println(i+1 + " " + rePassContentEditText.getText());
                     RegisterForm registerForm = new RegisterForm();
                     registerForm.setEmail(emailContentEditText.getText().toString());
                     registerForm.setFirstname(firstNameContentEditText.getText().toString());
                     registerForm.setLastname(lastNameContentEditText.getText().toString());
-
                     Date birthday = Common.integerToDate(yearAutoCompleteTextView.getText().toString()
                             ,monthAutoCompleteTextView.getText().toString()
                             ,dayAutoCompleteTextView.getText().toString());
-
                     registerForm.setBirthday(birthday);
                     registerForm.setCityId(cityId);
                     registerForm.setDistrictId(districtId);
@@ -421,6 +405,17 @@ public class RegisterFragment extends Fragment {
         }else {
             rePassInputLayOut.setError(null);
         }
+
+        if(!"".equals(passContentEditText.getText().toString())
+                && !passContentEditText.getText().toString().equals(rePassContentEditText.getText().toString())){
+
+            passInputLayOut.setError("Mật khẩu và mật khẩu nhập lại không trùng khớp");
+            rePassInputLayOut.setError(null);
+            check = false;
+        }else {
+            passInputLayOut.setError(null);
+            rePassInputLayOut.setError(null);
+        }
         return check;
     }
 
@@ -433,19 +428,20 @@ public class RegisterFragment extends Fragment {
                 MyResponse myResponse = response.body();
                 assert myResponse != null;
 
-//                if(myResponse.getMessage().equals(Constant.SUCCESS_MESSAGE_CALL_API)){
-//                    Gson gson = Common.getMyGson();
-//                    String json = gson.toJson(myResponse.getData());
-//                    LoginResponse loginResponse = gson.fromJson(json, LoginResponse.class);
-//
-//                    MyStorage myStorage = new MyStorage(requireActivity());
-//                    myStorage.save(Constant.TOKEN_KEY, loginResponse.getToken());
-//                    myStorage.save(Constant.USER_KEY, gson.toJson(loginResponse.getUserResponse()));
-//                    // đi đến trang welcome sau khi login thành công
-//                    Common.switchActivity((AppCompatActivity) getActivity(), MainBikeShare.class);
-//                }else{
-//
-//                }
+                if(myResponse.getMessage().equals(Constant.SUCCESS_MESSAGE_CALL_API)){
+                    ((MainActivity) requireActivity()).switchActiveFragment();
+                }else{
+                    Gson gson = Common.getMyGson();
+                    String resultActive = gson.toJson(myResponse.getData());
+                    switch (resultActive){
+                        case Constant.REGISTER_RESULT_FAIL_1:
+                            genderInputLayOut.setError(resultActive);
+                        case Constant.REGISTER_RESULT_FAIL_2:
+                            emailInputLayOut.setError(resultActive);
+                        case Constant.REGISTER_RESULT_FAIL_3:
+                            emailInputLayOut.setError(resultActive);
+                    }
+                }
                 Toast.makeText(getActivity(),myResponse.toString(),Toast.LENGTH_SHORT).show();
 
                 myProgressDialog.dismiss();

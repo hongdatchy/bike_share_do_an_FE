@@ -1,6 +1,7 @@
 package com.google.codelabs.mdc.java.shrine.api;
 
 import com.google.codelabs.mdc.java.shrine.entities.RegisterForm;
+import com.google.codelabs.mdc.java.shrine.entities.RentBikeRequest;
 import com.google.codelabs.mdc.java.shrine.utils.Common;
 import com.google.codelabs.mdc.java.shrine.utils.Constant;
 import com.google.codelabs.mdc.java.shrine.entities.LoginForm;
@@ -16,6 +17,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -43,6 +45,9 @@ public interface ApiService {
     @POST("api/common/loginUser")
     Call<MyResponse> login(@Body LoginForm loginForm);
 
+    @GET("api/common/logout/{token}")
+    Call<MyResponse> logout(@Path("token") String token);
+
     @GET("api/common/station")
     Call<MyResponse> getAllStation();
 
@@ -60,6 +65,15 @@ public interface ApiService {
 
     @POST("api/common/register")
     Call<MyResponse> register(@Body RegisterForm registerForm);
+
+    @GET("api/common/active/{code}")
+    Call<MyResponse> active(@Path("code") String code);
+
+    @GET("api/common/token/{token}")
+    Call<MyResponse> checkLoginByToken(@Path("token") String token);
+
+    @POST("api/us/rentBike")
+    Call<MyResponse> rentBike(@Body RentBikeRequest rentBikeRequest, @Header("token") String token);
 
     @GET("https://maps.googleapis.com/maps/api/directions/json")
     Call<Object> getDirection(@Query("origin") String origin,

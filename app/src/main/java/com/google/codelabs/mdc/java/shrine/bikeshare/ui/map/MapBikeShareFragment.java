@@ -47,9 +47,9 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.codelabs.mdc.java.shrine.R;
 import com.google.codelabs.mdc.java.shrine.api.ApiService;
 import com.google.codelabs.mdc.java.shrine.databinding.FragmentMapBikeShareBinding;
-import com.google.codelabs.mdc.java.shrine.entities.adapter.AdapterStation;
 import com.google.codelabs.mdc.java.shrine.entities.MyResponse;
 import com.google.codelabs.mdc.java.shrine.entities.Station;
+import com.google.codelabs.mdc.java.shrine.entities.adapter.AdapterStation;
 import com.google.codelabs.mdc.java.shrine.utils.Common;
 import com.google.codelabs.mdc.java.shrine.utils.Constant;
 import com.google.gson.Gson;
@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -162,7 +163,7 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
                 myLatDestination = station.getLatitude();
                 myLongDestination = station.getLongitude();
                 if(!station.getId().equals(0)){
-                    addMaker(new LatLng(myLatDestination, myLongDestination), Constant.DESTINATION);
+                    addMaker(new LatLng(myLatDestination, myLongDestination), Constant.DESTINATION, station.getLocation());
                     moveCamera(new LatLng(myLatDestination, myLongDestination), 13);
                     drawRoute();
                 }
@@ -193,7 +194,7 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
                     myLongOrigin = userLocation.longitude;
                     String s = "Vị trí hiện tại";
                     originEditText.setText(s);
-                    addMaker(new LatLng(myLatOrigin, myLongOrigin), Constant.ORIGIN);
+                    addMaker(new LatLng(myLatOrigin, myLongOrigin), Constant.ORIGIN, "");
                     drawRoute();
                 }
                 return false;
@@ -266,7 +267,7 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
                             myLatOrigin = Double.parseDouble(split[0]);
                             myLongOrigin = Double.parseDouble(split[1]);
                             moveCamera(new LatLng(myLatOrigin, myLongOrigin), 13);
-                            addMaker(new LatLng(myLatOrigin, myLongOrigin), Constant.ORIGIN);
+                            addMaker(new LatLng(myLatOrigin, myLongOrigin), Constant.ORIGIN, "");
                             drawRoute();
                         }catch (Exception exception){
                             System.out.println("place api not working or other case");
@@ -275,36 +276,24 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
                 }
             });
 
-    private void addMaker(LatLng latLng, String type){
-        Geocoder geocoder;
-        String address;
-        MarkerOptions options ;
-        geocoder = new Geocoder(requireActivity(), Locale.getDefault());
-        try {
-            List<Address> mapsActivities = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            if(mapsActivities.size() != 0){
-                address = mapsActivities.get(0).getAddressLine(0);
-                options = new MarkerOptions();
-                options.position(latLng);
-                options.title(address);
-                if(type.equals(Constant.ORIGIN)){
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                    if(markerOrigin != null){
-                        markerOrigin.remove();
-                    }
-                    markerOrigin = googleMap.addMarker(options);
-                    markerOrigin.showInfoWindow();
-                }else {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                    if(markerDestination != null){
-                        markerDestination.remove();
-                    }
-                    markerDestination = googleMap.addMarker(options);
-                    markerDestination.showInfoWindow();
-                }
+    private void addMaker(LatLng latLng, String type, String title){
+        MarkerOptions options = new MarkerOptions();
+        options.position(latLng);
+        options.title(title);
+        if(type.equals(Constant.ORIGIN)){
+            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            if(markerOrigin != null){
+                markerOrigin.remove();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            markerOrigin = googleMap.addMarker(options);
+            markerOrigin.showInfoWindow();
+        }else {
+            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            if(markerDestination != null){
+                markerDestination.remove();
+            }
+            markerDestination = googleMap.addMarker(options);
+            markerDestination.showInfoWindow();
         }
     }
 
@@ -317,7 +306,6 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
             polyline.remove();
         }
         if(myLatOrigin != null && myLongOrigin != null && myLatDestination != null && myLongDestination != null){
-
             ApiService.apiService.getDirection(myLatOrigin +","+myLongOrigin,
                     myLatDestination + "," + myLongDestination,
                     "driving",

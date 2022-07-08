@@ -32,67 +32,70 @@ import retrofit2.Response;
 
 public class ActiveAccountFragment extends Fragment {
 
-    private TextInputEditText passwordEditText;
-    private TextInputLayout passwordTextInput;
-    private TextInputEditText usernameEditText;
+    private TextInputEditText activeEditText;
+    private TextInputLayout activeLayout;
     private MyProgressDialog myProgressDialog;
+    private MaterialButton activeButton;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
-        passwordTextInput = view.findViewById(R.id.password_text_input);
-        passwordEditText = view.findViewById(R.id.password_edit_text);
-        usernameEditText = view.findViewById(R.id.username_edit_text);
-        MaterialButton loginButton = view.findViewById(R.id.login_button);
-        MaterialButton registerButton = view.findViewById(R.id.register_button);
+        View view = inflater.inflate(R.layout.fragment_active_accout, container, false);
+        activeEditText = view.findViewById(R.id.active_text_input);
+        activeLayout = view.findViewById(R.id.active_layout);
+        activeButton = view.findViewById(R.id.active_button);
+
         myProgressDialog = new MyProgressDialog(getActivity());
 
-        loginButton.setOnClickListener(view1 -> {
-            String email = String.valueOf(usernameEditText.getText());
-            String pass = String.valueOf(passwordEditText.getText());
-//            call api login
-            callApiLogin(new LoginForm(email, pass));
-        });
-        registerButton.setOnClickListener(view1 -> {
-            ((MainActivity)requireActivity()).switchRegisterFragment();
-        });
+        onClickActive();
         return view;
     }
 
-    private void callApiLogin(LoginForm loginForm) {
+    private void onClickActive(){
+        activeButton.setOnClickListener(view -> {
+            if(validateCode()){
+                callApiActive(activeEditText.getText().toString());
+            }
+        });
+
+    }
+
+    private void callApiActive(String activeCode) {
         myProgressDialog.show();
-        ApiService.apiService.login(loginForm).enqueue(new Callback<MyResponse>() {
+        ApiService.apiService.active(activeCode).enqueue(new Callback<MyResponse>() {
             @Override
             public void onResponse(@NonNull Call<MyResponse> call, @NonNull Response<MyResponse> response) {
 
                 MyResponse myResponse = response.body();
-                passwordTextInput.setError(null);
+                activeLayout.setError(null);
                 assert myResponse != null;
 
                 if(myResponse.getMessage().equals(Constant.SUCCESS_MESSAGE_CALL_API)){
-                    Gson gson = Common.getMyGson();
-                    String json = gson.toJson(myResponse.getData());
-                    LoginResponse loginResponse = gson.fromJson(json, LoginResponse.class);
-
-                    MyStorage myStorage = new MyStorage(requireActivity());
-                    myStorage.save(Constant.TOKEN_KEY, loginResponse.getToken());
-                    myStorage.save(Constant.USER_KEY, gson.toJson(loginResponse.getUserResponse()));
-                    // đi đến trang welcome sau khi login thành công
-                    Common.switchActivity((AppCompatActivity) getActivity(), MainBikeShare.class);
+                    ((MainActivity)requireActivity()).switchLoginFragment();
                 }else{
-                    passwordTextInput.setError((CharSequence) myResponse.getData());
+                    activeLayout.setError((CharSequence) myResponse.getData());
                 }
                 myProgressDialog.dismiss();
             }
 
             @Override
             public void onFailure(@NonNull Call<MyResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getActivity(),"Error internet or server is not running",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Error callApiActive",Toast.LENGTH_SHORT).show();
                 myProgressDialog.dismiss();
             }
         });
+    }
+
+    private boolean validateCode(){
+        boolean rs = true;
+        if("".equals(activeEditText.getText().toString())){
+            activeLayout.setError("Chưa nhập mã active code");
+            rs = false;
+        }else{
+            activeLayout.setError(null);
+        }
+        return rs;
     }
 
 }

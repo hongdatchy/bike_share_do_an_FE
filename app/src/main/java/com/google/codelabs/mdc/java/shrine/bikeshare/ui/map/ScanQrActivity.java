@@ -20,15 +20,15 @@ import com.google.codelabs.mdc.java.shrine.utils.MyStorage;
 import com.google.zxing.Result;
 
 public class ScanQrActivity extends AppCompatActivity {
-    private static final String TAG = "HONGDATCHY SCAN";
-    private CodeScanner mCodeScanner;
 
+    private CodeScanner mCodeScanner;
+    MyStorage myStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scan_qr_activity);
-
+        myStorage = new MyStorage(ScanQrActivity.this);
 
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
         mCodeScanner = new CodeScanner(this, scannerView);
@@ -40,9 +40,9 @@ public class ScanQrActivity extends AppCompatActivity {
                     // hàm này chạy khi detect được mã qr code thành công
                     @Override
                     public void run() {
-                        Toast.makeText(ScanQrActivity.this, "Quét mã QR thành công", Toast.LENGTH_SHORT).show();
-                        MyStorage myStorage = new MyStorage(ScanQrActivity.this);
+
                         myStorage.save(Constant.BIKE_ID_KEY, result.getText());
+                        Toast.makeText(ScanQrActivity.this, "Quét mã QR thành công", Toast.LENGTH_SHORT).show();
                         Common.switchActivity(ScanQrActivity.this, DetailBileActivity.class);
                     }
                 });

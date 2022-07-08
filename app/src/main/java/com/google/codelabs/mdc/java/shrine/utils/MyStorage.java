@@ -21,4 +21,5 @@ public class MyStorage {
     public String get(String key) {
         return prefs.getString(key,"");
     }
+
 }

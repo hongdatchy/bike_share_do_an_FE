@@ -92,7 +92,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<MyResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getActivity(),"Error internet or server is not running",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Call api fail",Toast.LENGTH_SHORT).show();
                 myProgressDialog.dismiss();
             }
         });
