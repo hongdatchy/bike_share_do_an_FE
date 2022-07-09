@@ -5,7 +5,7 @@ xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:background="@drawable/bg2"
-tools:context=".bikeshare.ui.map.DetailBileActivity">
+tools:context=".activities.DetailBileActivity">
 
 <LinearLayout
     android:layout_width="match_parent"

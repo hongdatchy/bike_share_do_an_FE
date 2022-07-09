@@ -1,4 +1,4 @@
-package com.google.codelabs.mdc.java.shrine.bikeshare.ui.map;
+package com.google.codelabs.mdc.java.shrine.activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -14,8 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.codelabs.mdc.java.shrine.R;
-import com.google.codelabs.mdc.java.shrine.activities.MainActivity;
-import com.google.codelabs.mdc.java.shrine.activities.RentingBikeActivity;
 import com.google.codelabs.mdc.java.shrine.api.ApiService;
 import com.google.codelabs.mdc.java.shrine.entities.BikeInfo;
 import com.google.codelabs.mdc.java.shrine.entities.MyResponse;
@@ -139,22 +137,14 @@ public class DetailBileActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     MyResponse myResponse = response.body();
                     assert myResponse != null;
-                    if(myResponse.getMessage().equals(Constant.SUCCESS_MESSAGE_CALL_API)){
-                        Gson gson = Common.getMyGson();
-                        String json = gson.toJson(myResponse.getData());
-                        myStorage.save(Constant.CONTRACT_BIKE_KEY, json);
-                        if(Common.checkRentBikeSuccess(DetailBileActivity.this)){
-                            Toast.makeText(DetailBileActivity.this, "Thuê xe thành công rồi bbbbbbbbb", Toast.LENGTH_LONG).show();
-                            Common.switchActivity(DetailBileActivity.this, RentingBikeActivity.class);
-                        }
-                    }else{
+                    if(!myResponse.getMessage().equals(Constant.SUCCESS_MESSAGE_CALL_API)){
                         Toast.makeText(DetailBileActivity.this,"Thuê xe thất bại",Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(DetailBileActivity.this,"Phiên làm việc đã hết hạn",Toast.LENGTH_SHORT).show();
+                    socketClient.unSubscribe();
                     Common.switchActivity(DetailBileActivity.this, MainActivity.class);
                 }
-
                 myProgressDialog.dismiss();
             }
 

@@ -7,7 +7,6 @@ import com.google.codelabs.mdc.java.shrine.utils.Constant;
 import com.google.codelabs.mdc.java.shrine.entities.LoginForm;
 import com.google.codelabs.mdc.java.shrine.entities.MyResponse;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -74,6 +73,9 @@ public interface ApiService {
 
     @POST("api/us/rentBike")
     Call<MyResponse> rentBike(@Body RentBikeRequest rentBikeRequest, @Header("token") String token);
+
+    @POST("api/us/endRentBike")
+    Call<MyResponse> endRentBike(@Body int bikeId, @Header("token") String token);
 
     @GET("https://maps.googleapis.com/maps/api/directions/json")
     Call<Object> getDirection(@Query("origin") String origin,

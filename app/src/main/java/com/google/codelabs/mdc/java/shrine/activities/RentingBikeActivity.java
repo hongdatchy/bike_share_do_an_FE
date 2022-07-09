@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,35 +36,34 @@ public class RentingBikeActivity extends AppCompatActivity implements OnMapReady
     SocketClient socketClient;
     Marker marker;
     BikeInfo bikeInfo;
+    ImageButton imageButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_renting_bike);
-
-        socketClient = new SocketClient(this);
-        myStorage = new MyStorage(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.google_map_renting_bike);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
+        imageButton = findViewById(R.id.stop_button);
+
+        socketClient = new SocketClient(this);
+        myStorage = new MyStorage(this);
         Gson gson = Common.getMyGson();
         bikeInfo = gson.fromJson(myStorage.get(Constant.BIKE_INFO), BikeInfo.class);
-        socketClient.subscriberStompCheckEndRenting(bikeInfo.getId());
-
 
     }
 
     @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        this.googleMap = googleMap;
-
-
+    public void onMapReady(@NonNull GoogleMap mMap) {
+        this.googleMap = mMap;
         LatLng latLng = new LatLng(bikeInfo.getLatitude(), bikeInfo.getLongitude());
         moveCamera(latLng, 12);
         settingUiGoogleMap();
-        socketClient.subscriberStompUpdateLatLongBike(bikeInfo.getId(), googleMap, marker);
+        socketClient.subscriberStompUpdateLatLongBikeOrCheckEndRenting(bikeInfo.getId()
+                , googleMap, marker, imageButton);
         runTimer();
     }
 
@@ -94,18 +94,9 @@ public class RentingBikeActivity extends AppCompatActivity implements OnMapReady
     private int seconds = 0;
     private void runTimer() {
 
-        // Get the text view.
         final TextView timeView = (TextView)findViewById(R.id.time_view);
-
-        // Creates a new Handler
         final Handler handler = new Handler();
 
-        // Call the post() method,
-        // passing in a new Runnable.
-        // The post() method processes
-        // code without a delay,
-        // so the code in the Runnable
-        // will run almost immediately.
         handler.post(new Runnable() {
             @Override
 
@@ -115,19 +106,14 @@ public class RentingBikeActivity extends AppCompatActivity implements OnMapReady
                 int minutes = (seconds % 3600) / 60;
                 int secs = seconds % 60;
 
-                // Format the seconds into hours, minutes,
-                // and seconds.
+                // Format the seconds into hours, minutes and seconds.
                 String time = String.format(Locale.getDefault(),
                         "%d:%02d:%02d", hours, minutes, secs);
-
                 // Set the text view text.
                 timeView.setText(time);
-
                 // increment the seconds variable.
-
                 seconds++;
-                // Post the code again
-                // with a delay of 1 second.
+                // Post the code again with a delay of 1 second.
                 handler.postDelayed(this, 1000);
             }
         });

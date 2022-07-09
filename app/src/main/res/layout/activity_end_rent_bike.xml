@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg2"
+    tools:context=".activities.EndRentBikeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:paddingTop="16dp">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/header_bike_share_layout" />
+        <TextView
+            android:textColor="#E66BAA44"
+            android:textStyle="bold|italic"
+            android:textSize="20dp"
+            android:text="Cảm ơn bạn đã xử dụng dịch vụ của chúng tôi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+            <TextView
+                android:paddingStart="40dp"
+                android:text="Thời gian bắt đầu"
+                android:layout_weight="0.4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/start_time_textview"
+                android:layout_weight="0.6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+            <TextView
+                android:paddingStart="40dp"
+                android:text="Thời gian kết thúc"
+                android:layout_weight="0.4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/end_time_textview"
+                android:layout_weight="0.6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+            <TextView
+                android:paddingStart="40dp"
+                android:text="Tổng thời gian"
+                android:layout_weight="0.4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/total_time_textview"
+                android:layout_weight="0.6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="18sp" />/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="80dp">
+            <TextView
+                android:paddingStart="40dp"
+                android:text="Số km đi được"
+                android:layout_weight="0.4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/distance_textview"
+                android:layout_weight="0.6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="18sp" />/>
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/to_main_bike_share_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="@string/to_main_bike_share" />
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

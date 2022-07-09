@@ -1,13 +1,9 @@
-package com.google.codelabs.mdc.java.shrine.bikeshare.ui.map;
+package com.google.codelabs.mdc.java.shrine.activities;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.budiyev.android.codescanner.CodeScanner;

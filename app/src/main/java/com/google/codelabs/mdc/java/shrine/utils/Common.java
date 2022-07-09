@@ -19,7 +19,7 @@ import java.util.Locale;
 
 public class Common {
 
-    public static void switchActivity(AppCompatActivity currentActivity, Class<?> nextActivity){
+    public static void switchActivity(Context currentActivity, Class<?> nextActivity){
         Intent myIntent = new Intent(currentActivity, nextActivity);
         currentActivity.startActivity(myIntent);
     }
@@ -72,16 +72,26 @@ public class Common {
         return check;
     }
 
+//    /**
+//     * hàm kiểm tra xem đã mở khoá ở device chưa và response từ api call rent bike thành công không
+//     *
+//     * @param context context hiện tại
+//     * @return true nếu đã mở khoá + response call api là thành công
+//     */
+//    public static boolean checkRentBikeSuccess(Context context){
+//        MyStorage myStorage = new MyStorage(context);
+//        String openLockSuccess = myStorage.get(Constant.OPEN_LOCK_SUCCESS_KEY);
+//        String contractBike = myStorage.get(Constant.CONTRACT_BIKE_KEY);
+//        return !"".equals(openLockSuccess) && !"".equals(contractBike);
+//    }
+
     /**
-     * hàm kiểm tra xem đã mở khoá ở device chưa và response từ api call rent bike thành công không
-     *
-     * @param context context hiện tại
-     * @return true nếu đã mở khoá + response call api là thành công
+     * convert date về dạng 19h:20p ngày 19/3/2022
+     * @param date date cần convert
+     * @return date dạng string sau khi đã convert
      */
-    public static boolean checkRentBikeSuccess(Context context){
-        MyStorage myStorage = new MyStorage(context);
-        String openLockSuccess = myStorage.get(Constant.OPEN_LOCK_SUCCESS_KEY);
-        String contractBike = myStorage.get(Constant.CONTRACT_BIKE_KEY);
-        return !"".equals(openLockSuccess) && !"".equals(contractBike);
+    public static String formatDate(Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH'h:'mm'p ngày 'dd/MM/yyyy", Locale.getDefault());
+        return simpleDateFormat.format(date);
     }
 }

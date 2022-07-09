@@ -39,15 +39,19 @@
             android:exported="true">
         </activity>
 
-        <activity android:name=".bikeshare.ui.map.ScanQrActivity"
+        <activity android:name=".activities.ScanQrActivity"
             android:exported="true">
         </activity>
 
-        <activity android:name=".bikeshare.ui.map.DetailBileActivity"
+        <activity android:name=".activities.DetailBileActivity"
             android:exported="true">
         </activity>
 
         <activity android:name=".activities.RentingBikeActivity"
+            android:exported="true">
+        </activity>
+
+        <activity android:name=".activities.EndRentBikeActivity"
             android:exported="true">
         </activity>
 

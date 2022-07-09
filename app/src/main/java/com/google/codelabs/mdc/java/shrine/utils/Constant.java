@@ -15,7 +15,7 @@ public class Constant {
     public static final String BIKE_ID_KEY = "bikeIdKey";
     public static final String BIKE_INFO = "bikeInfo";
     public static final String OPEN_LOCK_SUCCESS_KEY = "openLockSuccessKey";
-    public static final String CONTRACT_BIKE_KEY = "contractBikeKey";
+    public static final String CONTRACT_BIKE_RESPONSE_KEY = "contractBikeResponseKey";
     public static final String SHARE_PREFERENCE_NAME = "share_pre_name";
 
 
