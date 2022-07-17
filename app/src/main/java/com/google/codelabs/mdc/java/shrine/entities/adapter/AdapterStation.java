@@ -11,14 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.google.codelabs.mdc.java.shrine.R;
-import com.google.codelabs.mdc.java.shrine.entities.Station;
+import com.google.codelabs.mdc.java.shrine.entities.StationResponse;
 
 import java.util.List;
 
-public class AdapterStation extends ArrayAdapter<Station> {
+public class AdapterStation extends ArrayAdapter<StationResponse> {
     LayoutInflater layoutInflater;
 
-    public AdapterStation(Activity context, int resourceId, List<Station> list){
+    public AdapterStation(Activity context, int resourceId, List<StationResponse> list){
         super(context,resourceId, list);
     }
 
@@ -34,7 +34,7 @@ public class AdapterStation extends ArrayAdapter<Station> {
 
 
     private View rowView(View convertView , int position){
-        Station station = getItem(position);
+        StationResponse stationResponse = getItem(position);
         ViewHolder holder ;
         View rowView = convertView;
         if (rowView==null) {
@@ -49,10 +49,10 @@ public class AdapterStation extends ArrayAdapter<Station> {
         }else{
             holder = (ViewHolder) rowView.getTag();
         }
-        if(!station.getId().equals(0)){
-            holder.nameTextView.setText(station.getName());
-            holder.locationTextView.setText(station.getLocation());
-            String numberBike = "số xe: " + station.getCurrentNumberCar() + " / " + station.getSlotQuantity();
+        if(!stationResponse.getId().equals(0)){
+            holder.nameTextView.setText(stationResponse.getName());
+            holder.locationTextView.setText(stationResponse.getLocation());
+            String numberBike = "số xe: " + stationResponse.getCurrentNumberCar() + " / " + stationResponse.getSlotQuantity();
             holder.numberBikeTextView.setText(numberBike);
         }else {
             holder.nameTextView.setTextSize(30);

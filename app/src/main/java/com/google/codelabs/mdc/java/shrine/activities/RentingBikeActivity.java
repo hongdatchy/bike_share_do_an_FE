@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,14 +21,21 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.codelabs.mdc.java.shrine.R;
+import com.google.codelabs.mdc.java.shrine.api.ApiService;
 import com.google.codelabs.mdc.java.shrine.entities.BikeInfo;
+import com.google.codelabs.mdc.java.shrine.entities.MyResponse;
 import com.google.codelabs.mdc.java.shrine.socket.SocketClient;
 import com.google.codelabs.mdc.java.shrine.utils.Common;
 import com.google.codelabs.mdc.java.shrine.utils.Constant;
+import com.google.codelabs.mdc.java.shrine.utils.MyProgressDialog;
 import com.google.codelabs.mdc.java.shrine.utils.MyStorage;
 import com.google.gson.Gson;
 
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RentingBikeActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -49,11 +57,22 @@ public class RentingBikeActivity extends AppCompatActivity implements OnMapReady
 
         imageButton = findViewById(R.id.stop_button);
 
+
         socketClient = new SocketClient(this);
         myStorage = new MyStorage(this);
+
+        if(myStorage.get(Constant.statusLockWhenRenting).equals("")){
+            myStorage.save(Constant.statusLockWhenRenting, "open");
+        }
+        if(myStorage.get(Constant.statusLockWhenRenting).equals("open")) {
+                imageButton.setImageResource(R.drawable.stop_icon);
+        } else{
+            imageButton.setImageResource(R.drawable.play_icon);;
+        }
+
         Gson gson = Common.getMyGson();
         bikeInfo = gson.fromJson(myStorage.get(Constant.BIKE_INFO), BikeInfo.class);
-
+        onCLickButton();
     }
 
     @Override
@@ -65,6 +84,17 @@ public class RentingBikeActivity extends AppCompatActivity implements OnMapReady
         socketClient.subscriberStompUpdateLatLongBikeOrCheckEndRenting(bikeInfo.getId()
                 , googleMap, marker, imageButton);
         runTimer();
+    }
+
+    private void onCLickButton(){
+        imageButton.setOnClickListener(view -> {
+            imageButton.setClickable(false);
+            if(myStorage.get(Constant.statusLockWhenRenting).equals("open")){
+                socketClient.callApiEndRentBike(bikeInfo.getId(), myStorage.get(Constant.TOKEN_KEY));
+            } else {
+                callApiContinueRentBike(bikeInfo.getId(), myStorage.get(Constant.TOKEN_KEY));
+            }
+        });
     }
 
     private void moveCamera(LatLng latLng, int zoom){
@@ -94,7 +124,7 @@ public class RentingBikeActivity extends AppCompatActivity implements OnMapReady
     private int seconds = 0;
     private void runTimer() {
 
-        final TextView timeView = (TextView)findViewById(R.id.time_view);
+        final TextView timeView = findViewById(R.id.time_view);
         final Handler handler = new Handler();
 
         handler.post(new Runnable() {
@@ -119,4 +149,38 @@ public class RentingBikeActivity extends AppCompatActivity implements OnMapReady
         });
     }
 
+    private void callApiContinueRentBike(int bikeId, String token) {
+        MyProgressDialog myProgressDialog = new MyProgressDialog(this);
+        myProgressDialog.show();
+
+        ApiService.apiService.continueRentBike(bikeId, token).enqueue(new Callback<MyResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<MyResponse> call, @NonNull Response<MyResponse> response) {
+                if (response.isSuccessful()) {
+                    MyResponse myResponse = response.body();
+                    assert myResponse != null;
+                    if(!myResponse.getMessage().equals(Constant.SUCCESS_MESSAGE_CALL_API)){
+                        Toast.makeText(RentingBikeActivity.this,"Tiếp tục thuê xe thất bại",Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(RentingBikeActivity.this,"Phiên làm việc đã hết hạn",Toast.LENGTH_SHORT).show();
+                    socketClient.unSubscribe();
+                    Common.switchActivity(RentingBikeActivity.this, MainActivity.class);
+                }
+
+                myProgressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MyResponse> call, @NonNull Throwable t) {
+                Toast.makeText(RentingBikeActivity.this,"Call api fail",Toast.LENGTH_SHORT).show();
+                myProgressDialog.dismiss();
+            }
+        });
+    }
+
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
+    }
 }

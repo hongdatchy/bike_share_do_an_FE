@@ -1,28 +1,21 @@
 package com.google.codelabs.mdc.java.shrine.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.codelabs.mdc.java.shrine.R;
 import com.google.codelabs.mdc.java.shrine.api.ApiService;
 import com.google.codelabs.mdc.java.shrine.bikeshare.MainBikeShare;
-import com.google.codelabs.mdc.java.shrine.entities.LoginForm;
-import com.google.codelabs.mdc.java.shrine.entities.LoginResponse;
 import com.google.codelabs.mdc.java.shrine.entities.MyResponse;
 import com.google.codelabs.mdc.java.shrine.fragments.ActiveAccountFragment;
 import com.google.codelabs.mdc.java.shrine.fragments.LoginFragment;
 import com.google.codelabs.mdc.java.shrine.fragments.RegisterFragment;
 import com.google.codelabs.mdc.java.shrine.utils.Common;
 import com.google.codelabs.mdc.java.shrine.utils.Constant;
-import com.google.codelabs.mdc.java.shrine.utils.MyProgressDialog;
 import com.google.codelabs.mdc.java.shrine.utils.MyStorage;
-import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;

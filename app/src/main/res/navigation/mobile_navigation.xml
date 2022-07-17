@@ -12,14 +12,14 @@
         tools:layout="@layout/fragment_map_bike_share" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.google.codelabs.mdc.java.shrine.bikeshare.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_contract"
+        android:name="com.google.codelabs.mdc.java.shrine.bikeshare.ui.contract.ContractFragment"
+        android:label="@string/menu_contract"
+        tools:layout="@layout/fragment_contract" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.google.codelabs.mdc.java.shrine.bikeshare.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_userInfo"
+        android:name="com.google.codelabs.mdc.java.shrine.bikeshare.ui.UserInfo.UserInfoFragment"
+        android:label="@string/menu_userInfo"
+        tools:layout="@layout/fragment_user_info" />
 </navigation>

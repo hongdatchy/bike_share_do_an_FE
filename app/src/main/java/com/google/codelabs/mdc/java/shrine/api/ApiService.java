@@ -74,8 +74,14 @@ public interface ApiService {
     @POST("api/us/rentBike")
     Call<MyResponse> rentBike(@Body RentBikeRequest rentBikeRequest, @Header("token") String token);
 
+    @POST("api/us/continueRentBike")
+    Call<MyResponse> continueRentBike(@Body int bikeId, @Header("token") String token);
+
     @POST("api/us/endRentBike")
     Call<MyResponse> endRentBike(@Body int bikeId, @Header("token") String token);
+
+    @GET("api/us/contract")
+    Call<MyResponse> getAllContractUser(@Header("token") String token);
 
     @GET("https://maps.googleapis.com/maps/api/directions/json")
     Call<Object> getDirection(@Query("origin") String origin,

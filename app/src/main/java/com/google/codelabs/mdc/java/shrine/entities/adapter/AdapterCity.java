@@ -36,7 +36,7 @@ public class AdapterCity extends ArrayAdapter<City> {
     private View rowView(int position){
         City city = getItem(position);
         layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = layoutInflater.inflate(R.layout.list_item_in_register, null, false);
+        view = layoutInflater.inflate(R.layout.item_adapter_register, null, false);
         TextView textView  =  view.findViewById(R.id.nameCityDistrictWard);
         view.setTag(textView);
         textView.setText(city.getName());

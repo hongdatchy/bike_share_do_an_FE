@@ -66,7 +66,7 @@ public class DetailBileActivity extends AppCompatActivity {
         bikeId = myStorage.get(Constant.BIKE_ID_KEY);
 
         socketClient = new SocketClient(this);
-        socketClient.subscriberStomp(bikeId);
+        socketClient.subscriberStompOpenLockSuccess(bikeId);
 
         callApiGetBikeInfoByBikeId(Integer.parseInt(bikeId));
         spinnerPaymentMethodOnclick();

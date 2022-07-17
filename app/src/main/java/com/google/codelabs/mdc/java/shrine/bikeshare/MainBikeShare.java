@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import com.google.codelabs.mdc.java.shrine.R;
 import com.google.codelabs.mdc.java.shrine.activities.MainActivity;
+import com.google.codelabs.mdc.java.shrine.activities.RentingBikeActivity;
 import com.google.codelabs.mdc.java.shrine.api.ApiService;
 import com.google.codelabs.mdc.java.shrine.databinding.ActivityMainBikeShareBinding;
 import com.google.codelabs.mdc.java.shrine.entities.LoginForm;
@@ -57,15 +58,21 @@ public class MainBikeShare extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_contract, R.id.nav_userInfo)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        myProgressDialog = new MyProgressDialog(this);
+
+
+
         myStorage = new MyStorage(this);
+        if(!myStorage.get(Constant.OPEN_LOCK_SUCCESS_KEY).equals("")){
+            Common.switchActivity(this, RentingBikeActivity.class);
+        }
+        myProgressDialog = new MyProgressDialog(this);
         setFullName(navigationView);
         onclickLogout(navigationView);
 

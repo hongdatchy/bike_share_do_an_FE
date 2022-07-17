@@ -94,4 +94,6 @@ public class Common {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH'h:'mm'p ngày 'dd/MM/yyyy", Locale.getDefault());
         return simpleDateFormat.format(date);
     }
+
+
 }

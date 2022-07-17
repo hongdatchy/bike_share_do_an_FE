@@ -47,7 +47,7 @@ import com.google.codelabs.mdc.java.shrine.activities.ScanQrActivity;
 import com.google.codelabs.mdc.java.shrine.api.ApiService;
 import com.google.codelabs.mdc.java.shrine.databinding.FragmentMapBikeShareBinding;
 import com.google.codelabs.mdc.java.shrine.entities.MyResponse;
-import com.google.codelabs.mdc.java.shrine.entities.Station;
+import com.google.codelabs.mdc.java.shrine.entities.StationResponse;
 import com.google.codelabs.mdc.java.shrine.entities.adapter.AdapterStation;
 import com.google.codelabs.mdc.java.shrine.utils.Common;
 import com.google.codelabs.mdc.java.shrine.utils.Constant;
@@ -77,17 +77,18 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
     EditText originEditText;
     Double myLatOrigin = null, myLongOrigin = null;
     Double myLatDestination = null, myLongDestination = null;
-    List<Station> stationList = new ArrayList<>();
+    List<StationResponse> stationResponseList = new ArrayList<>();
     Spinner spinner;
     Marker markerOrigin, markerDestination;
     Polyline polyline;
     ImageView scanQrImageView;
+    private FragmentMapBikeShareBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        FragmentMapBikeShareBinding binding = FragmentMapBikeShareBinding.inflate(inflater, container, false);
+        binding = FragmentMapBikeShareBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         originEditText = root.findViewById(R.id.origin_edit_text);
         scanQrImageView = root.findViewById(R.id.scanQrCode);
@@ -116,7 +117,7 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
 
     private void setOnclickScanQr(ImageView imageView){
         imageView.setOnClickListener(view -> {
-            Common.switchActivity((AppCompatActivity) getActivity(), ScanQrActivity.class);
+            Common.switchActivity(getActivity(), ScanQrActivity.class);
         });
     }
 
@@ -130,13 +131,13 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
                 if(Constant.SUCCESS_MESSAGE_CALL_API.equals(myResponse.getMessage())){
                     Gson gson = Common.getMyGson();
                     String json = gson.toJson(myResponse.getData());
-                    stationList = gson.fromJson(json, new TypeToken<List<Station>>(){}.getType());
-                    Station stationAsFirstItemInSpinner = new Station();
-                    stationAsFirstItemInSpinner.setId(0);
-                    stationList.add(0, stationAsFirstItemInSpinner);
+                    stationResponseList = gson.fromJson(json, new TypeToken<List<StationResponse>>(){}.getType());
+                    StationResponse stationResponseAsFirstItemInSpinner = new StationResponse();
+                    stationResponseAsFirstItemInSpinner.setId(0);
+                    stationResponseList.add(0, stationResponseAsFirstItemInSpinner);
                     spinner = root.findViewById(R.id.spinnerStation);
-                    ArrayAdapter<Station> adapter = new AdapterStation(requireActivity(),
-                            R.layout.my_spinner_item, stationList);
+                    ArrayAdapter<StationResponse> adapter = new AdapterStation(requireActivity(),
+                            R.layout.my_spinner_item, stationResponseList);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setAdapter(adapter);
                     spinnerOnclick(spinner);
@@ -155,11 +156,11 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                Station station = (Station) parent.getItemAtPosition(position); //this is your selected item
-                myLatDestination = station.getLatitude();
-                myLongDestination = station.getLongitude();
-                if(!station.getId().equals(0)){
-                    addMaker(new LatLng(myLatDestination, myLongDestination), Constant.DESTINATION, station.getLocation());
+                StationResponse stationResponse = (StationResponse) parent.getItemAtPosition(position); //this is your selected item
+                myLatDestination = stationResponse.getLatitude();
+                myLongDestination = stationResponse.getLongitude();
+                if(!stationResponse.getId().equals(0)){
+                    addMaker(new LatLng(myLatDestination, myLongDestination), Constant.DESTINATION, stationResponse.getLocation());
                     moveCamera(new LatLng(myLatDestination, myLongDestination), 13);
                     drawRoute();
                 }
@@ -348,5 +349,11 @@ public class MapBikeShareFragment extends Fragment implements OnMapReadyCallback
                         }
                     });
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

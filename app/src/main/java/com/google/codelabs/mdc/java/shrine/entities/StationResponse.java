@@ -3,7 +3,7 @@ package com.google.codelabs.mdc.java.shrine.entities;
 import lombok.Data;
 
 @Data
-public class Station {
+public class StationResponse {
 
     private Integer id;
 

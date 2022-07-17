@@ -48,7 +48,6 @@ public class SocketClient {
     private static final String TAG = "SocketClient";
 
     public SocketClient(Context context){
-        System.out.println("ddddkdndkdbdbdkgdhd");
         this.context = context;
         this.myStorage = new MyStorage(context);
         this.mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP,
@@ -63,17 +62,15 @@ public class SocketClient {
         compositeDisposable = new CompositeDisposable();
     }
 
-    public void subscriberStomp(String bikeId) {
+    public void subscriberStompOpenLockSuccess(String bikeId) {
         resetSubscriptions();
-        Disposable disposable = mStompClient.topic("/topic/notifyRenting/" + bikeId)
+        Disposable disposable = mStompClient.topic("/topic/openSuccess/" + bikeId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
-
                     myStorage.save(Constant.OPEN_LOCK_SUCCESS_KEY, topicMessage.getPayload());
                     unSubscribe();
                     Common.switchActivity(context, RentingBikeActivity.class);
-
                 }, throwable -> {
                     Log.e(TAG, "Error on subscribe topic", throwable);
                 });
@@ -82,59 +79,75 @@ public class SocketClient {
 
     GoogleMap googleMap;
     Marker marker;
+    ImageButton imageButton;
     public void subscriberStompUpdateLatLongBikeOrCheckEndRenting(int bikeId
-            , GoogleMap gMap, Marker mKer, ImageButton imageButton) {
+            , GoogleMap gMap, Marker mKer, ImageButton imageBtn) {
         this.googleMap = gMap;
         this.marker = mKer;
+        this.imageButton = imageBtn;
         resetSubscriptions();
         Disposable disposable = mStompClient.topic("/topic/updateLatLongOrCheckEndRenting/" + bikeId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
-                    if(topicMessage.getPayload().equals("Bạn có muốn kết thúc chuyến đi không")){
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage(topicMessage.getPayload());
-                        builder.setCancelable(true);
+                    switch (topicMessage.getPayload()){
+                        case "cl temp":
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setMessage(Constant.CHECK_END_RENT_BIKE_MESSAGE);
+                            builder.setCancelable(true);
 
-                        builder.setPositiveButton(
-                                "Có",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                        int bikeId = Integer.parseInt(myStorage.get(Constant.BIKE_ID_KEY));
-                                        callApiEndRentBike(bikeId, myStorage.get(Constant.TOKEN_KEY));
-                                    }
-                                });
+                            builder.setPositiveButton(
+                                    "Có",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                            int bikeId = Integer.parseInt(myStorage.get(Constant.BIKE_ID_KEY));
+                                            callApiEndRentBike(bikeId, myStorage.get(Constant.TOKEN_KEY));
+                                        }
+                                    });
 
-                        builder.setNegativeButton(
-                                "Khoá xe tạm thời",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                        imageButton.setImageResource(R.drawable.play_icon);
-                                    }
-                                });
+                            builder.setNegativeButton(
+                                    "Khoá xe tạm thời",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                            imageButton.setImageResource(R.drawable.play_icon);
+                                            myStorage.save(Constant.statusLockWhenRenting, "close");
+                                        }
+                                    });
 
-                        AlertDialog alert11 = builder.create();
-                        alert11.show();
-                    }else {
-                        String[] s = topicMessage.getPayload().split(",");
-                        double mLat = Double.parseDouble(s[0]);
-                        double mLong = Double.parseDouble(s[1]);
-                        MarkerOptions options = new MarkerOptions();
-                        options.position(new LatLng(mLat, mLong));
-                        int height = 100;
-                        int width = 100;
-                        Bitmap b = BitmapFactory.decodeResource(context.getResources(), R.drawable.location_icon_dot);
-                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-                        BitmapDescriptor smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(smallMarker);
-                        options.icon(smallMarkerIcon);
-                        if(marker != null){
-                            marker.remove();
-                        }
-                        marker = googleMap.addMarker(options);
-                        marker.showInfoWindow();
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLong), 15));
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                            break;
+                        case "op continue success":
+                            imageButton.setImageResource(R.drawable.stop_icon);
+                            myStorage.save(Constant.statusLockWhenRenting, "open");
+                            imageButton.setClickable(true);
+                            break;
+                        case "cl success":
+                            unSubscribe();
+                            Common.switchActivity(context, EndRentBikeActivity.class);
+                            break;
+                        default:
+                            String[] s = topicMessage.getPayload().split(",");
+                            double mLat = Double.parseDouble(s[0]);
+                            double mLong = Double.parseDouble(s[1]);
+                            MarkerOptions options = new MarkerOptions();
+                            options.position(new LatLng(mLat, mLong));
+                            int height = 100;
+                            int width = 100;
+                            Bitmap b = BitmapFactory.decodeResource(context.getResources(), R.drawable.location_icon_dot);
+                            Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+                            BitmapDescriptor smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(smallMarker);
+                            options.icon(smallMarkerIcon);
+                            if(marker != null){
+                                marker.remove();
+                            }
+                            marker = googleMap.addMarker(options);
+                            marker.showInfoWindow();
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLat, mLong), 17));
+                            break;
+
                     }
 
                 }, throwable -> {
@@ -150,7 +163,7 @@ public class SocketClient {
         }
     }
 
-    private void callApiEndRentBike(int bikeId, String token) {
+    public void callApiEndRentBike(int bikeId, String token) {
         MyProgressDialog myProgressDialog = new MyProgressDialog(context);
         myProgressDialog.show();
 
@@ -167,7 +180,8 @@ public class SocketClient {
                         unSubscribe();
                         Common.switchActivity(context, EndRentBikeActivity.class);
                     }else{
-                        Toast.makeText(context,"Kết thúc thuê xe thất bại",Toast.LENGTH_SHORT).show();
+                        imageButton.setClickable(true);
+                        Toast.makeText(context,"Vui lòng cho xe vào trong bãi đỗ",Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(context,"Phiên làm việc đã hết hạn",Toast.LENGTH_SHORT).show();

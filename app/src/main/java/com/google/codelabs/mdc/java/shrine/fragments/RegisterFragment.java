@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
@@ -20,10 +19,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.codelabs.mdc.java.shrine.R;
 import com.google.codelabs.mdc.java.shrine.activities.MainActivity;
 import com.google.codelabs.mdc.java.shrine.api.ApiService;
-import com.google.codelabs.mdc.java.shrine.bikeshare.MainBikeShare;
 import com.google.codelabs.mdc.java.shrine.entities.City;
 import com.google.codelabs.mdc.java.shrine.entities.District;
-import com.google.codelabs.mdc.java.shrine.entities.LoginResponse;
 import com.google.codelabs.mdc.java.shrine.entities.MyResponse;
 import com.google.codelabs.mdc.java.shrine.entities.RegisterForm;
 import com.google.codelabs.mdc.java.shrine.entities.Ward;
@@ -33,7 +30,6 @@ import com.google.codelabs.mdc.java.shrine.entities.adapter.AdapterWard;
 import com.google.codelabs.mdc.java.shrine.utils.Common;
 import com.google.codelabs.mdc.java.shrine.utils.Constant;
 import com.google.codelabs.mdc.java.shrine.utils.MyProgressDialog;
-import com.google.codelabs.mdc.java.shrine.utils.MyStorage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -136,10 +132,10 @@ public class RegisterFragment extends Fragment {
         List<Integer> items2 = Common.getListMonth();
         List<Integer> items3 = Common.getListDay();
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(), R.layout.list_item_in_register, items);
-        ArrayAdapter<Integer> arrayAdapter1 = new ArrayAdapter<>(requireActivity(), R.layout.list_item_in_register, items1);
-        ArrayAdapter<Integer> arrayAdapter2 = new ArrayAdapter<>(requireActivity(), R.layout.list_item_in_register, items2);
-        ArrayAdapter<Integer> arrayAdapter3 = new ArrayAdapter<>(requireActivity(), R.layout.list_item_in_register, items3);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireActivity(), R.layout.item_adapter_register, items);
+        ArrayAdapter<Integer> arrayAdapter1 = new ArrayAdapter<>(requireActivity(), R.layout.item_adapter_register, items1);
+        ArrayAdapter<Integer> arrayAdapter2 = new ArrayAdapter<>(requireActivity(), R.layout.item_adapter_register, items2);
+        ArrayAdapter<Integer> arrayAdapter3 = new ArrayAdapter<>(requireActivity(), R.layout.item_adapter_register, items3);
 
         genderAutoCompleteTextView.setAdapter(arrayAdapter);
         yearAutoCompleteTextView.setAdapter(arrayAdapter1);
@@ -160,7 +156,7 @@ public class RegisterFragment extends Fragment {
                     Gson gson = Common.getMyGson();
                     String json = gson.toJson(myResponse.getData());
                     cityList = gson.fromJson(json, new TypeToken<List<City>>(){}.getType());
-                    ArrayAdapter<City> arrayAdapter = new AdapterCity(requireActivity(), R.layout.list_item_in_register, cityList);
+                    ArrayAdapter<City> arrayAdapter = new AdapterCity(requireActivity(), R.layout.item_adapter_register, cityList);
                     cityAutoCompleteTextView.setAdapter(arrayAdapter);
                     myProgressDialog.dismiss();
                     onClickCity();
@@ -186,7 +182,7 @@ public class RegisterFragment extends Fragment {
                     Gson gson = Common.getMyGson();
                     String json = gson.toJson(myResponse.getData());
                     districtList = gson.fromJson(json, new TypeToken<List<District>>(){}.getType());
-                    ArrayAdapter<District> arrayAdapter = new AdapterDistrict(requireActivity(), R.layout.list_item_in_register, districtList);
+                    ArrayAdapter<District> arrayAdapter = new AdapterDistrict(requireActivity(), R.layout.item_adapter_register, districtList);
                     districtAutoCompleteTextView.setAdapter(arrayAdapter);
                     myProgressDialog.dismiss();
                     onClickDistrict();
@@ -212,7 +208,7 @@ public class RegisterFragment extends Fragment {
                     Gson gson = Common.getMyGson();
                     String json = gson.toJson(myResponse.getData());
                     wardList = gson.fromJson(json, new TypeToken<List<Ward>>(){}.getType());
-                    ArrayAdapter<Ward> arrayAdapter = new AdapterWard(requireActivity(), R.layout.list_item_in_register, wardList);
+                    ArrayAdapter<Ward> arrayAdapter = new AdapterWard(requireActivity(), R.layout.item_adapter_register, wardList);
                     wardAutoCompleteTextView.setAdapter(arrayAdapter);
                     myProgressDialog.dismiss();
                     onClickWard();
